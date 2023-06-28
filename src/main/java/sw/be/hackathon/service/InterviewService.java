@@ -26,8 +26,14 @@ public class InterviewService {
         interviewRepository.delete(interview);
     }
 
-    public void saveNewInterview(Member member, Question question){
+    public Interview saveNewInterview(Member member, Question question){
+        Interview interview = Interview.builder()
+                .member(member)
+                .question(question)
+                .build();
+        interviewRepository.save(interview);
 
+        return interview;
     }
 
     public void saveTranscription(TranscriptionResponseDTO transcriptionResponse, Interview interview) {
@@ -40,6 +46,7 @@ public class InterviewService {
         Boolean wrong = false;
         String sentence = "";
         Double confidence = 0.0;
+        Integer dotCount = 0;
         for(TranscriptionItemDTO item : items){
             String content = "";
             for(TranscriptionItemAlternativesDTO alternativesDTO : item.getAlternatives()){
@@ -47,7 +54,10 @@ public class InterviewService {
                 if(tempConfidence <= 0.80 && !alternativesDTO.getContent().equals(".")){
                     wrong = true;
                 }
-                confidence += tempConfidence;
+
+                if(tempConfidence > 0.0) {
+                    confidence += tempConfidence;
+                }
 
                 if(!wrong){
                     content += alternativesDTO.getContent();
@@ -60,13 +70,16 @@ public class InterviewService {
             sentence += content + " ";
 
             if(content.equals(".")){
-                sentence = sentence.replace(" . ", ".");
+                sentence = sentence.replace(" . ", ". ");
+                dotCount++;
             }
         }
-        confidence /= items.size();
+        confidence /= (items.size() - dotCount);
 
         interview.setTranscription(sentence);
         interview.setPronunciationScore(confidence);
+        String url = "https://ainterview-video.s3.ap-northeast-2.amazonaws.com/" + interview.getMember().getUuid() + "/" + interview.getQuestion().getId();
+        interview.setUrl(url);
     }
 
     private void saveEntireTranscription(TranscriptionResultDTO results, Interview interview) {
