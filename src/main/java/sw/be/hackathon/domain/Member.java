@@ -19,13 +19,44 @@ public class Member {
 
     private String uuid;
 
+    private Double scoreDS;
+    private Integer countDS;
+
+    private Double scoreAL;
+    private Integer countAL;
+
+    private Double scoreNT;
+    private Integer countNT;
+
+    private Double scoreOS;
+    private Integer countOS;
+
+    private Double scoreDB;
+    private Integer countDB;
+
+    private Double scoreIS;
+    private Integer countIS;
+
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Interview> interviews;
 
     @PrePersist
-    public void setUuid(){
+    public void init(){
         this.uuid = UUID.randomUUID().toString();
+        this.scoreDS = 0.0;
+        this.scoreAL = 0.0;
+        this.scoreNT = 0.0;
+        this.scoreOS = 0.0;
+        this.scoreDB = 0.0;
+        this.scoreIS = 0.0;
+
+        this.countDS = 0;
+        this.countAL = 0;
+        this.countNT = 0;
+        this.countOS = 0;
+        this.countDB = 0;
+        this.countIS = 0;
     }
 
 }
