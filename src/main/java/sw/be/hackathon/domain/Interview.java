@@ -1,9 +1,6 @@
 package sw.be.hackathon.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -12,6 +9,7 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Interview {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "INTERVIEW_ID")
