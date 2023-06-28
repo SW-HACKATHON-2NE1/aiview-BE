@@ -2,6 +2,7 @@ package sw.be.hackathon.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import sw.be.hackathon.domain.Interview;
 import sw.be.hackathon.domain.Member;
 import sw.be.hackathon.domain.Question;
+import sw.be.hackathon.dto.InterviewResponseDto;
 import sw.be.hackathon.dto.S3UploadUrlDto;
 import sw.be.hackathon.dto.transcription.TranscriptionResponseDTO;
 import sw.be.hackathon.repository.InterviewRepository;
@@ -49,7 +51,7 @@ public class InterviewController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @ApiOperation(value = "답변 영상 업로드용 URL 발급", notes = "presigned-url을 통해 영상을 업로드 하고 성공(OK)를 받았으면 업로드 성공")
+    @ApiOperation(value = "답변 영상 업로드용 URL 발급 (업로드!!)", notes = "presigned-url을 통해 영상을 업로드 하고 성공(OK)를 받았으면 업로드 성공")
     @GetMapping("/presigned-url/upload/{questionId}")
     public ResponseEntity getPresignedUrlForUpload(
             @RequestHeader(name = "Authorization") String token,
@@ -61,7 +63,7 @@ public class InterviewController {
         return new ResponseEntity(new S3UploadUrlDto(preSignedUrl), HttpStatus.OK);
     }
 
-    @ApiOperation(value = "답변 영상의 URL 발급", notes = "video 태그의 src 값으로 들어갈 영상 url 발급")
+    @ApiOperation(value = "답변 영상의 URL 발급 (브라우저에 띄우는!!)", notes = "video 태그의 src 값으로 들어갈 영상 url 발급")
 
     @GetMapping("/presigned-url/{questionId}")
     public ResponseEntity getPresignedUrl(
@@ -72,5 +74,19 @@ public class InterviewController {
         String preSignedUrl = amazonS3Service.getPresignedUrl(member, questionId);
 
         return new ResponseEntity(new S3UploadUrlDto(preSignedUrl), HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "답변 결과 데이터 응답", notes = "")
+    @GetMapping("/interview/{questionId}")
+    public ResponseEntity getResultOfInterview(
+            @RequestHeader(name = "Authorization") String token,
+            @PathVariable Long questionId
+    ){
+        Member member = memberService.findByUUID(token);
+        Question question = questionService.findById(questionId);
+        Interview interview = interviewService.findByMemberAndQuestion(member, question);
+        InterviewResponseDto responseDto = interviewService.getResultOfInterview(interview);
+
+        return new ResponseEntity(responseDto, HttpStatus.OK);
     }
 }
