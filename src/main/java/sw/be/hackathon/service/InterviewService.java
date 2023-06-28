@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import sw.be.hackathon.domain.Interview;
 import sw.be.hackathon.domain.Member;
 import sw.be.hackathon.domain.Question;
+import sw.be.hackathon.dto.InterviewResponseDto;
 import sw.be.hackathon.dto.transcription.*;
 import sw.be.hackathon.repository.InterviewRepository;
 
@@ -89,5 +90,14 @@ public class InterviewService {
         }
 
         interview.setTranscription(transcription);
+    }
+
+    public InterviewResponseDto getResultOfInterview(Interview interview) {
+        return InterviewResponseDto.builder()
+                .pronunciationScore(interview.getPronunciationScore())
+                .questionId(interview.getQuestion().getId())
+                .transcription(interview.getTranscription())
+                .url(interview.getUrl())
+                .build();
     }
 }
