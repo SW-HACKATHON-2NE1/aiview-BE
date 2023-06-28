@@ -26,9 +26,13 @@ public class InterviewService {
         interviewRepository.delete(interview);
     }
 
+    public void saveNewInterview(Member member, Question question){
+
+    }
+
     public void saveTranscription(TranscriptionResponseDTO transcriptionResponse, Interview interview) {
         TranscriptionResultDTO results = transcriptionResponse.getResults();
-        saveEntireTranscription(results, interview);
+//        saveEntireTranscription(results, interview);
         saveConfidenceOfPronunciation(results.getItems(), interview);
     }
 
@@ -40,7 +44,7 @@ public class InterviewService {
             String content = "";
             for(TranscriptionItemAlternativesDTO alternativesDTO : item.getAlternatives()){
                 Double tempConfidence = Double.parseDouble(alternativesDTO.getConfidence());
-                if(tempConfidence <= 0.80 && alternativesDTO.getContent().equals()){
+                if(tempConfidence <= 0.80 && !alternativesDTO.getContent().equals(".")){
                     wrong = true;
                 }
                 confidence += tempConfidence;
@@ -58,9 +62,11 @@ public class InterviewService {
             if(content.equals(".")){
                 sentence = sentence.replace(" . ", ".");
             }
-
-            endTime = item.getEnd_time();
         }
+        confidence /= items.size();
+
+        interview.setTranscription(sentence);
+        interview.setPronunciationScore(confidence);
     }
 
     private void saveEntireTranscription(TranscriptionResultDTO results, Interview interview) {

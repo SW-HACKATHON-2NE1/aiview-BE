@@ -31,23 +31,23 @@ public class InterviewController {
     private final QuestionService questionService;
     private final TranscriptionService transcriptionService;
 
-    @ApiOperation(value = "영상에서 텍스트 추출", notes = "AWS Transcribe API를 이용하여 영상에서 텍스트 추출 작업 실행")
-    @GetMapping("/transcription")
-    public ResponseEntity createTranscription(
-            @RequestHeader(name = "Authorization") String token,
-            @RequestParam Long questionId
-    ){
-        Member member = memberService.findByUUID(token);
-        Question question = questionService.findById(questionId);
-        Interview interview = interviewService.findByMemberAndQuestion(member, question);
-
-        if(interview != null){
-            interviewService.remove(interview);
-        }
-
-        TranscriptionResponseDTO transcriptionResponse = transcriptionService.extractSpeechTextFromVideo(member, questionId);
-        interviewService.saveTranscription(transcriptionResponse, interview);
-
-        return ApiResponse.of(TranscribeResponseType.TRANSCRIBE_OK, transcriptionResponse);
-    }
+//    @ApiOperation(value = "영상에서 텍스트 추출", notes = "AWS Transcribe API를 이용하여 영상에서 텍스트 추출 작업 실행")
+//    @GetMapping("/transcription")
+//    public ResponseEntity createTranscription(
+//            @RequestHeader(name = "Authorization") String token,
+//            @RequestParam Long questionId
+//    ){
+//        Member member = memberService.findByUUID(token);
+//        Question question = questionService.findById(questionId);
+//        Interview interview = interviewService.findByMemberAndQuestion(member, question);
+//
+//        if(interview != null){
+//            interviewService.remove(interview);
+//        }
+//
+//        TranscriptionResponseDTO transcriptionResponse = transcriptionService.extractSpeechTextFromVideo(member, questionId);
+//        interviewService.saveTranscription(transcriptionResponse);
+//
+//        return ApiResponse.of(TranscribeResponseType.TRANSCRIBE_OK, transcriptionResponse);
+//    }
 }
