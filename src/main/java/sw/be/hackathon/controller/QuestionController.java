@@ -40,8 +40,7 @@ public class QuestionController {
         Member member = memberService.findByUUID(token);
         SubjectCode code = SubjectCode.valueOf(subjectCode.toUpperCase());
         QuestionResponseDto questionDto = questionService.getQuestionRandom(code);
-        Cycle cycle = cycleService.getNewCycle();
-        memberService.setCurrentCycle(member, cycle);
+        memberService.setCurrentCycle(member);
 
         return new ResponseEntity(questionDto, HttpStatus.OK);
     }

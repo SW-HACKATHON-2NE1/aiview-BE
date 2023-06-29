@@ -83,7 +83,7 @@ public class InterviewService {
             }
         }
         confidence /= (items.size() - dotCount);
-        confidence = Math.round(confidence * 100) / 100.0;
+        confidence = Math.round(confidence * 10000) / 100.0;
 
         questionAndAnswer.setTranscription(sentence);
         questionAndAnswer.setPronunciationScore(confidence);

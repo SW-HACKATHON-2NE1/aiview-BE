@@ -12,6 +12,7 @@ import sw.be.hackathon.repository.MemberRepository;
 @Transactional
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final CycleService cycleService;
 
     public Member findByUUID(String uuid){
         return memberRepository.findByUuid(uuid)
@@ -24,7 +25,8 @@ public class MemberService {
         return member;
     }
 
-    public void setCurrentCycle(Member member, Cycle cycle){
+    public void setCurrentCycle(Member member){
+        Cycle cycle = cycleService.getNewCycle();
         member.setCurrentCycle(cycle.getId());
     }
 }
