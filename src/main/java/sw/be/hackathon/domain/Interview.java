@@ -27,4 +27,12 @@ public class Interview {
     private Double pronunciationScore;
     private String url;
 
+    private Double sad;
+    private Double confused;
+    private Double disgusted;
+    private Double angry;
+    private Double surprised;
+    private Double fear;
+    private Double calm;
+    private Double happy;
 }
