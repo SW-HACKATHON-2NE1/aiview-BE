@@ -27,12 +27,20 @@ public class Cycle {
 	private List<QuestionAndAnswer> questionAndAnswers = new ArrayList<>();
 
 
-	private Double sad;
-	private Double confused;
-	private Double disgusted;
-	private Double angry;
-	private Double surprised;
-	private Double fear;
-	private Double calm;
-	private Double happy;
+	@Builder.Default
+	private Double sad=0d;
+	@Builder.Default
+	private Double confused=0d;
+	@Builder.Default
+	private Double disgusted=0d;
+	@Builder.Default
+	private Double angry=0d;
+	@Builder.Default
+	private Double surprised=0d;
+	@Builder.Default
+	private Double fear=0d;
+	@Builder.Default
+	private Double calm=0d;
+	@Builder.Default
+	private Double happy=0d;
 }
