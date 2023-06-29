@@ -3,7 +3,7 @@ package sw.be.hackathon.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sw.be.hackathon.domain.Interview;
+import sw.be.hackathon.domain.QuestionAndAnswer;
 import sw.be.hackathon.domain.Member;
 import sw.be.hackathon.domain.Question;
 import sw.be.hackathon.dto.InterviewResponseDto;
@@ -18,32 +18,32 @@ import java.util.List;
 public class InterviewService {
     private final InterviewRepository interviewRepository;
 
-    public Interview findByMemberAndQuestion(Member member, Question question){
+    public QuestionAndAnswer findByMemberAndQuestion(Member member, Question question){
         return interviewRepository.findByMemberAndQuestion(member, question)
                 .orElse(null);
     }
 
-    public void remove(Interview interview) {
-        interviewRepository.delete(interview);
+    public void remove(QuestionAndAnswer questionAndAnswer) {
+        interviewRepository.delete(questionAndAnswer);
     }
 
-    public Interview saveNewInterview(Member member, Question question){
-        Interview interview = Interview.builder()
+    public QuestionAndAnswer saveNewInterview(Member member, Question question){
+        QuestionAndAnswer questionAndAnswer = QuestionAndAnswer.builder()
                 .member(member)
                 .question(question)
                 .build();
-        interviewRepository.save(interview);
+        interviewRepository.save(questionAndAnswer);
 
-        return interview;
+        return questionAndAnswer;
     }
 
-    public void saveTranscription(TranscriptionResponseDTO transcriptionResponse, Interview interview) {
+    public void saveTranscription(TranscriptionResponseDTO transcriptionResponse, QuestionAndAnswer questionAndAnswer) {
         TranscriptionResultDTO results = transcriptionResponse.getResults();
 //        saveEntireTranscription(results, interview);
-        saveConfidenceOfPronunciation(results.getItems(), interview);
+        saveConfidenceOfPronunciation(results.getItems(), questionAndAnswer);
     }
 
-    private void saveConfidenceOfPronunciation(List<TranscriptionItemDTO> items, Interview interview) {
+    private void saveConfidenceOfPronunciation(List<TranscriptionItemDTO> items, QuestionAndAnswer questionAndAnswer) {
         Boolean wrong = false;
         String sentence = "";
         Double confidence = 0.0;
@@ -77,27 +77,27 @@ public class InterviewService {
         }
         confidence /= (items.size() - dotCount);
 
-        interview.setTranscription(sentence);
-        interview.setPronunciationScore(confidence);
-        String url = "https://ainterview-video.s3.ap-northeast-2.amazonaws.com/" + interview.getMember().getUuid() + "/" + interview.getQuestion().getId();
-        interview.setUrl(url);
+        questionAndAnswer.setTranscription(sentence);
+        questionAndAnswer.setPronunciationScore(confidence);
+        String url = "https://ainterview-video.s3.ap-northeast-2.amazonaws.com/" + questionAndAnswer.getMember().getUuid() + "/" + questionAndAnswer.getQuestion().getId();
+        questionAndAnswer.setUrl(url);
     }
 
-    private void saveEntireTranscription(TranscriptionResultDTO results, Interview interview) {
+    private void saveEntireTranscription(TranscriptionResultDTO results, QuestionAndAnswer questionAndAnswer) {
         String transcription = "";
         for(TranscriptionTextDTO transcriptionTextDto : results.getTranscripts()){
             transcription = transcription.concat(transcriptionTextDto.getTranscript());
         }
 
-        interview.setTranscription(transcription);
+        questionAndAnswer.setTranscription(transcription);
     }
 
-    public InterviewResponseDto getResultOfInterview(Interview interview) {
+    public InterviewResponseDto getResultOfInterview(QuestionAndAnswer questionAndAnswer) {
         return InterviewResponseDto.builder()
-                .pronunciationScore(interview.getPronunciationScore())
-                .questionId(interview.getQuestion().getId())
-                .transcription(interview.getTranscription())
-                .url(interview.getUrl())
+                .pronunciationScore(questionAndAnswer.getPronunciationScore())
+                .questionId(questionAndAnswer.getQuestion().getId())
+                .transcription(questionAndAnswer.getTranscription())
+                .url(questionAndAnswer.getUrl())
                 .build();
     }
 }

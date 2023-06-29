@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sw.be.hackathon.domain.Interview;
+import sw.be.hackathon.domain.QuestionAndAnswer;
 import sw.be.hackathon.domain.Member;
 import sw.be.hackathon.domain.Question;
 import sw.be.hackathon.dto.GptEvaluationResponseDto;
@@ -34,10 +34,10 @@ public class InterviewController {
     ){
         Member member = memberService.findByUUID(token);
         Question question = questionService.findById(questionId);
-        Interview interview = interviewService.findByMemberAndQuestion(member, question);
+        QuestionAndAnswer questionAndAnswer = interviewService.findByMemberAndQuestion(member, question);
 
-        if(interview != null){
-            interviewService.remove(interview);
+        if(questionAndAnswer != null){
+            interviewService.remove(questionAndAnswer);
         }
 
 
@@ -90,8 +90,8 @@ public class InterviewController {
     ){
         Member member = memberService.findByUUID(token);
         Question question = questionService.findById(questionId);
-        Interview interview = interviewService.findByMemberAndQuestion(member, question);
-        InterviewResponseDto responseDto = interviewService.getResultOfInterview(interview);
+        QuestionAndAnswer questionAndAnswer = interviewService.findByMemberAndQuestion(member, question);
+        InterviewResponseDto responseDto = interviewService.getResultOfInterview(questionAndAnswer);
 
         return new ResponseEntity(responseDto, HttpStatus.OK);
     }
@@ -113,8 +113,8 @@ public class InterviewController {
     ){
         Member member = memberService.findByUUID(token);
         Question question = questionService.findById(questionId);
-        Interview interview = interviewService.findByMemberAndQuestion(member, question);
-        GptEvaluationResponseDto evaluateDto = gptService.evaluate(interview);
+        QuestionAndAnswer questionAndAnswer = interviewService.findByMemberAndQuestion(member, question);
+        GptEvaluationResponseDto evaluateDto = gptService.evaluate(questionAndAnswer);
 
         return new ResponseEntity(evaluateDto, HttpStatus.OK);
     }

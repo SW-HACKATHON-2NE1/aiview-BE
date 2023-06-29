@@ -27,5 +27,5 @@ public class Question {
     private QuestionBaseStatus status = QuestionBaseStatus.N;
 
     @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Interview> interviews;
+    private List<QuestionAndAnswer> questionAndAnswers;
 }

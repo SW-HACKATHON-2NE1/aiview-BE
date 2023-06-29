@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
-import sw.be.hackathon.domain.Interview;
+import sw.be.hackathon.domain.QuestionAndAnswer;
 import sw.be.hackathon.domain.Question;
 import sw.be.hackathon.dto.*;
 import sw.be.hackathon.repository.QuestionRepository;
@@ -91,27 +91,27 @@ public class GptService {
         }
     }
 
-    public GptEvaluationResponseDto evaluate(Interview interview) {
-        GptResponseDto responseDto = getResponseFromGpt(interview.getQuestion().getContent(), interview.getTranscription());
+    public GptEvaluationResponseDto evaluate(QuestionAndAnswer questionAndAnswer) {
+        GptResponseDto responseDto = getResponseFromGpt(questionAndAnswer.getQuestion().getContent(), questionAndAnswer.getTranscription());
         GptContentDto content = responseDto.getChoices().get(0).getMessage().getContent();
         Integer score = content.getScore();
         String bestAnswer = content.getBestAnswer();
         String feedback = content.getFeedback();
         String tailQuestion = content.getTailQuestion();
 
-        interview.setScore(score);
-        interview.setBestAnswer(bestAnswer);
-        interview.setFeedback(feedback);
-        interview.setTailQuestion(tailQuestion);
+        questionAndAnswer.setScore(score);
+        questionAndAnswer.setBestAnswer(bestAnswer);
+        questionAndAnswer.setFeedback(feedback);
+        questionAndAnswer.setTailQuestion(tailQuestion);
 
         Question question = Question.builder()
-                .subjectCode(interview.getQuestion().getSubjectCode())
+                .subjectCode(questionAndAnswer.getQuestion().getSubjectCode())
                 .content(tailQuestion)
                 .build();
         questionRepository.save(question);
 
         GptEvaluationResponseDto evalDto = GptEvaluationResponseDto.builder()
-                .questionId(interview.getQuestion().getId())
+                .questionId(questionAndAnswer.getQuestion().getId())
                 .score(score)
                 .feedback(feedback)
                 .bestAnswer(bestAnswer)

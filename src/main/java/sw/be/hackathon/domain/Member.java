@@ -39,7 +39,7 @@ public class Member {
 
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    private List<Interview> interviews;
+    private List<QuestionAndAnswer> questionAndAnswers;
 
     @PrePersist
     public void init(){
