@@ -37,6 +37,10 @@ dependencies {
 	runtimeOnly 'com.h2database:h2:1.4.199'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	// https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-rekognition
+	implementation group: 'com.amazonaws', name: 'aws-java-sdk-rekognition', version: '1.12.497'
+
+
 
 
 	implementation 'org.bytedeco:javacv:1.5.7' // 버전은 적절히 확인하세요
