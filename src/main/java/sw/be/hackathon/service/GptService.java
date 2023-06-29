@@ -11,9 +11,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
-import sw.be.hackathon.dto.GptMessageDto;
-import sw.be.hackathon.dto.GptRequestDto;
-import sw.be.hackathon.dto.GptResponseDto;
+import sw.be.hackathon.domain.Interview;
+import sw.be.hackathon.domain.Question;
+import sw.be.hackathon.dto.*;
+import sw.be.hackathon.repository.QuestionRepository;
 
 import java.util.List;
 
@@ -21,6 +22,7 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class GptService {
+    private final QuestionRepository questionRepository;
     @Value("${gpt.token}")
     String GPT_TOKEN;
 
@@ -28,26 +30,35 @@ public class GptService {
     private final RestTemplate restTemplate;
 
 
-    public GptResponseDto requestGpt() {
-        List<GptMessageDto> messages = List.of(
-                GptMessageDto.builder()
+    public GptResponseDto getResponseFromGpt(String question, String answer) {
+        List<GptMessageRequestDto> messages = List.of(
+                GptMessageRequestDto.builder()
                         .role("system")
-                        .content("당신은 수업을 평가하는 AI입니다.")
+                        .content("당신은 백엔드 개발자 채용을 위한 직무 면접관 역할입니다. 질문과 답에 대해 기술적으로 정확한 채점을 해야 하며, 틀린 답변과 부족한 답변에 대해서는 정확한 피드백이 있어야 합니다.")
                         .build(),
-                GptMessageDto.builder()
+                GptMessageRequestDto.builder()
                         .role("user")
-                        .content(" 아래의 내용을 정보의 정확도와 전달력을 기준으로 0~100사이의 점수에 대해 측정하고, 이 내용에서 좋았던 점과 개선할 점을 여러개 분석해줘. 아래의 형식으로 데이터를 JSON 으로 만들어줘. 설명하지마. 마크다운으로 주지 마. 오로지 JSON 형태로만 줘. 내용을 정확하게 검증하여 잘못된 정보가 들어오거나 공부에 대한 내용이 아닐 경우 점수를 0으로 설정하고 strength은 공백으로 두고 weakness는 왜 0점이 되었는지 써줘.\n" +
-                                "                        {\"score\":\"/* 0~100사이의 강의에 대한 점수 정확도를 기준으로 측정*/\",\"strength\":\"/* 200자 내외의 내용의 정확도와 전달력을 기준으로 좋았던 점*/\",\"weakness\":\"/* 200자 내외의 정확도와 전달력을 기준으로 추가해야 할 내용*/\"}\n" +
-                                "                        \n" +
-                                "                        강의 내용: TCP는 비연결형 프로토콜로써, 인터넷상에서 서로 정보를 주고받을 때 정보를 보낸다는 신호나 받는다는 신호 절차를 거치지 않고 보내는 쪽에서 일방적으로 데이터를 전달하는 통신 프로토콜입니다. UDP와는 다르게 연결 설정이 없으며, 혼잡 제어를 하지 않기 때문에 UDP보다 전송 속도가 빠릅니다. 그러나 데이터 전송에 대한 보장을 하지 않기 때문에 패킷 손실이 발생할 수 있습니다. UDP는 신뢰성 있는 데이터 전송을 지원하는 연결 지향형 프로토콜입니다. 일반적으로 UDP와 IP가 함께 사용되는데, IP가 데이터의 전송을 처리한다면 UDP는 패킷 추적 및 관리를 하게 됩니다. 연결 지향형인 UDP는 3-way handshaking이라는 과정을 통해 연결 후 통신을 시작하는데, 흐름 제어와 혼잡 제어를 지원하며 데이터의 순서를 보장합니다. ")
+                        .content("지금 너가 채용해야 하는 직무는 백엔드 개발자이고, 해당 직무에 대한 기술 면접이기 때문에 네트워크 과목에 대해서 질문을 할꺼야. 너가 할 질문은 다음과 같아\n" +
+                                "\n" +
+                                "직무 면접 질문: TCP, UDP에 대해서 아는대로 설명해보세요.\n" +
+                                "\n" +
+                                "위의 기술 면접 질문에 대해서 아래 답변을 질문과 관련하여 맞는 질문인지 정확도와 전달력을 기준으로 0~100 사이의 점수에 대해 측정해줘. 답변의 길이는 한국말 기준 1분 이내라는 것을 명심해, 답변 내용의 적절성을 위주로 확인하고, 내용이 좀 부족한 것에 대해서는 넘어가도 좋아. 이 내용에서 좋았던 점과 개선할 점을 분석해줘. 질문에 대해서 너가 생각하는 모범답안을 알려주고, 이전 질문과 그 답변에 대해서 좀  더 심화적으로 물어볼 수 있는 질문을 1개 알려줘.  \n" +
+                                "\n" +
+                                "아래의 형식으로 데이터를 JSON 으로 만들어줘. 설명하지말고, 마크다운으로 주지 말고. 오로지 JSON 형태로만 줘. 내용을 정확하게 검증하여 잘못된 정보가 들어오거나 답변에 대한 내용이 아닐 경우 점수를 0으로 설정하고 strength는 공백으로 두고 weakness는 왜 0점이 되었는지 써줘.\n" +
+                                "{\"score\":\"/* 0~100사이의 답변에 대한 점수. 정확도를 기준으로 측정함.*/\", \"feedback\":\"/* 200자가 넘지 않게 답변에 대한 피드백을 해줘. 만약 피드백할 내용이 없으면 대체적으로 잘 답변했다고 하면 될 것 같아. */\", “bestAnswer\":\"/* 200자가 넘지 않게 너가 생각하는 질문에 대한 모범 답안을 작성해줘. */\", “tailQuestion\":\"/* 이전 질문과  사용자의 답변을 참고하여 주제에 대해 심화적으로 더 물어볼 수 있는 질문 */\"}\n" +
+                                "\n" +
+                                "답변 내용: TCP는 데이터의 순서와 신뢰성을 보장하는 연결 지향형 프로토콜입니다. 연결을 설정한 후 통신하며, 흐름 제어와 혼잡 제어를 지원합니다. 반면, UDP는 연결 없이 빠르게 데이터를 전송하는 비연결형 프로토콜이며, 데이터의 순서나 신뢰성을 보장하지 않습니다.")
                         .build(),
-                GptMessageDto.builder()
+                GptMessageRequestDto.builder()
                         .role("assistant")
-                        .content("{\"score\": 10,\"strength\": \"\",\"weakness\": \"TCP와 UDP에 대한 설명이 잘못되어 있습니다. TCP는 연결형 프로토콜로써 데이터의 전송을 보장하며, 흐름 제어와 혼잡 제어를 통해 데이터의 안정적인 전송을 보장합니다. 반면 UDP는 비연결형 프로토콜로서 전송 속도가 빠르지만 데이터의 전송을 보장하지 않습니다. 또한 UDP가 연결 지향형 프로토콜이라고 설명한 부분도 잘못되었습니다. 이러한 틀린 정보로 인해 전달력과 정확도가 낮아졌습니다.\"}")
+                        .content("{\"score\": 10, \"feedback\": \"이 답변에는 TCP와 UDP에 대한 설명이 혼동되고 잘못 표현되어 있습니다. 실제로 TCP는 연결 지향형 프로토콜로, 데이터 전송 전에 3-way handshake를 통해 연결을 설정합니다. TCP는 데이터의 순서 보장과 신뢰성을 제공합니다. 반대로, UDP는 비연결형 프로토콜로, 연결 설정 없이 데이터를 전송합니다. UDP는 빠른 전송을 제공하지만, 신뢰성이나 순서 보장은 하지 않습니다. 답변을 수정하여 TCP와 UDP의 특징을 정확하게 반영하는 것이 중요합니다.\", \"bestAnswer\":\"TCP(Transmission Control Protocol)는 연결 지향형 프로토콜로, 통신을 시작하기 전에 두 시스템 간에 연결을 설정합니다. 이는 3-way handshake 과정을 통해 이루어집니다. TCP는 데이터의 순서 보장, 신뢰성, 혼잡 제어 및 흐름 제어를 제공합니다. 이로 인해 높은 신뢰성이 필요한 애플리케이션에서 주로 사용됩니다. 반면, UDP(User Datagram Protocol)는 비연결형 프로토콜로, 데이터를 전송하기 전에 연결을 설정하지 않습니다. UDP는 낮은 지연 시간과 빠른 전송을 제공하지만, 데이터의 순서 보장이나 신뢰성은 제공하지 않습니다. 이로 인해 실시간 스트리밍, 게임, VoIP 등 빠른 데이터 전송이 중요한 경우에 적합합니다.\", \"tailQuestion\":\"TCP의 혼잡 제어(congestion control) 메커니즘이란 무엇이며, 이를 통해 네트워크 성능에 어떤 영향을 미치는지 설명할 수 있나요?\"}")
                         .build(),
-                GptMessageDto.builder()
+                GptMessageRequestDto.builder()
                         .role("user")
-                        .content("위와 같이 평가해줘. 강의 내용")
+                        .content("위와 같이 답변해줘.\n" +
+                                "\n" +
+                                "직무 면접 질문 : " + question + "\n" +
+                                "답변 내용: " + answer)
                         .build()
         );
 
@@ -67,12 +78,47 @@ public class GptService {
             HttpEntity<GptRequestDto> req = new HttpEntity<>(request, headers);
 
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, req, String.class);
-            System.out.println(response.getBody());
-            return objectMapper.readValue(response.getBody(), GptResponseDto.class);
+            String responseBody = response.getBody().replace("\\", "");
+            responseBody = responseBody.replace("\\", "");
+            responseBody = responseBody.replace("\"{", "{");
+            responseBody = responseBody.replace("}\"", "}");
+            System.out.println(responseBody);
+            return objectMapper.readValue(responseBody, GptResponseDto.class);
 
         }catch (Exception e){
             e.printStackTrace();
             throw new RuntimeException();
         }
+    }
+
+    public GptEvaluationResponseDto evaluate(Interview interview) {
+        GptResponseDto responseDto = getResponseFromGpt(interview.getQuestion().getContent(), interview.getTranscription());
+        GptContentDto content = responseDto.getChoices().get(0).getMessage().getContent();
+        Integer score = content.getScore();
+        String bestAnswer = content.getBestAnswer();
+        String feedback = content.getFeedback();
+        String tailQuestion = content.getTailQuestion();
+
+        interview.setScore(score);
+        interview.setBestAnswer(bestAnswer);
+        interview.setFeedback(feedback);
+        interview.setTailQuestion(tailQuestion);
+
+        Question question = Question.builder()
+                .subjectCode(interview.getQuestion().getSubjectCode())
+                .content(tailQuestion)
+                .build();
+        questionRepository.save(question);
+
+        GptEvaluationResponseDto evalDto = GptEvaluationResponseDto.builder()
+                .questionId(interview.getQuestion().getId())
+                .score(score)
+                .feedback(feedback)
+                .bestAnswer(bestAnswer)
+                .tailQuestion(tailQuestion)
+                .tailQuestionId(question.getId())
+                .build();
+
+        return evalDto;
     }
 }

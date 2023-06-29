@@ -12,5 +12,5 @@ import java.util.List;
 public class GptRequestDto{
     String model;
     Double temperature;
-    List<GptMessageDto> messages;
+    List<GptMessageRequestDto> messages;
 }

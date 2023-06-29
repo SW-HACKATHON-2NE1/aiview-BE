@@ -21,7 +21,10 @@ import sw.be.hackathon.service.MemberService;
 public class MemberController {
     private final MemberService memberService;
 
-    @ApiOperation(value = "처음 접속 시 토큰 받기", notes = "헤더에 토큰이 있으면 OK만 리턴, 헤더가 비어있으면 회원가입 진행 후 토큰 리턴")
+    @ApiOperation(value = "처음 접속 시 토큰 받기", notes = "헤더에 토큰이 있으면 OK만 리턴, 헤더가 비어있으면 회원가입 진행 후 토큰 리턴" +
+            "{\n" +
+            "  \"token\": \"efcf2ca0-d19d-459f-b833-8ab76533b524\"\n" +
+            "}")
     @GetMapping("/")
     public ResponseEntity provideToken(
             @RequestHeader(value = "Authorization", required = false) String token
