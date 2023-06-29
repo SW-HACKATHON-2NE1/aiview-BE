@@ -12,10 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import sw.be.hackathon.domain.Interview;
-import sw.be.hackathon.dto.GptMessageDto;
-import sw.be.hackathon.dto.GptMessageRequestDto;
-import sw.be.hackathon.dto.GptRequestDto;
-import sw.be.hackathon.dto.GptResponseDto;
+import sw.be.hackathon.domain.Question;
+import sw.be.hackathon.dto.*;
+import sw.be.hackathon.repository.QuestionRepository;
 
 import java.util.List;
 
@@ -23,6 +22,7 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class GptService {
+    private final QuestionRepository questionRepository;
     @Value("${gpt.token}")
     String GPT_TOKEN;
 
@@ -91,8 +91,34 @@ public class GptService {
         }
     }
 
-    public GptResponseDto evaluate(Interview interview) {
+    public GptEvaluationResponseDto evaluate(Interview interview) {
         GptResponseDto responseDto = getResponseFromGpt(interview.getQuestion().getContent(), interview.getTranscription());
+        GptContentDto content = responseDto.getChoices().get(0).getMessage().getContent();
+        Integer score = content.getScore();
+        String bestAnswer = content.getBestAnswer();
+        String feedback = content.getFeedback();
+        String tailQuestion = content.getTailQuestion();
 
+        interview.setScore(score);
+        interview.setBestAnswer(bestAnswer);
+        interview.setFeedback(feedback);
+        interview.setTailQuestion(tailQuestion);
+
+        Question question = Question.builder()
+                .subjectCode(interview.getQuestion().getSubjectCode())
+                .content(tailQuestion)
+                .build();
+        questionRepository.save(question);
+
+        GptEvaluationResponseDto evalDto = GptEvaluationResponseDto.builder()
+                .questionId(interview.getQuestion().getId())
+                .score(score)
+                .feedback(feedback)
+                .bestAnswer(bestAnswer)
+                .tailQuestion(tailQuestion)
+                .tailQuestionId(question.getId())
+                .build();
+
+        return evalDto;
     }
 }

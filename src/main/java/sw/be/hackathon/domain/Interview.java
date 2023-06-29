@@ -22,7 +22,7 @@ public class Interview {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "QUESTION_ID")
     private Question question;
-
+    @Column(length = 2000)
     private String transcription;
     private Double pronunciationScore;
     private String url;
@@ -35,4 +35,12 @@ public class Interview {
     private Double fear;
     private Double calm;
     private Double happy;
+
+    private Integer score;
+    @Column(length = 2000)
+    private String feedback;
+    @Column(length = 2000)
+    private String bestAnswer;
+    @Column(length = 2000)
+    private String tailQuestion;
 }
