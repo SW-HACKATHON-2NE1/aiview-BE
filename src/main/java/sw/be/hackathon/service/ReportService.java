@@ -33,16 +33,25 @@ public class ReportService {
                     .questionId(qa.getQuestion().getId())
                     .pronunciationScore(qa.getPronunciationScore())
                     .url(qa.getUrl())
-                    .scoreDS(member.getScoreDS())
-                    .scoreAL(member.getScoreAL())
-                    .scoreNT(member.getScoreNT())
-                    .scoreOS(member.getScoreOS())
-                    .scoreDB(member.getScoreDB())
-                    .scoreIS(member.getScoreIS())
                     .build();
 
             response.add(reportDto);
         }
+
+        Integer scoreDS = 0;
+        Integer scoreAL = 0;
+        Integer scoreNT = 0;
+        Integer scoreOS = 0;
+        Integer scoreDB = 0;
+        Integer scoreIS = 0;
+
+        if(member.getCountDS() != 0) scoreDS = member.getScoreDS() / member.getCountDS();
+        if(member.getCountAL() != 0) scoreAL = member.getScoreAL() / member.getCountAL();
+        if(member.getCountNT() != 0) scoreNT = member.getScoreNT() / member.getCountNT();
+        if(member.getCountOS() != 0) scoreOS = member.getScoreOS() / member.getCountOS();
+        if(member.getCountDB() != 0) scoreDB = member.getScoreDB() / member.getCountDB();
+        if(member.getCountIS() != 0) scoreIS = member.getScoreIS() / member.getCountIS();
+
 
         ReportDto reportDto = ReportDto.builder()
                 .reports(response)
@@ -54,6 +63,12 @@ public class ReportService {
                 .disgusted(cycle.getDisgusted())
                 .fear(cycle.getFear())
                 .surprised(cycle.getSurprised())
+                .scoreDS(scoreDS)
+                .scoreAL(scoreAL)
+                .scoreNT(scoreNT)
+                .scoreOS(scoreOS)
+                .scoreDB(scoreDB)
+                .scoreIS(scoreIS)
                 .build();
 
         return reportDto;

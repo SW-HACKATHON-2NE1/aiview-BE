@@ -122,6 +122,7 @@ public class InterviewController {
         Question question = questionService.findById(questionId);
         QuestionAndAnswer questionAndAnswer = interviewService.findByMemberAndQuestion(member, question);
         GptEvaluationResponseDto evaluateDto = gptService.evaluate(questionAndAnswer);
+        System.out.println("ㅁㄴㅇ먼오ㅓㅁㄴㅇㄴ머ㅏ운머ㅏ운ㅁ어ㅏㅜㄴㅁ어ㅏㅜㄴㅁ아ㅓㅁ누어ㅏㄴㅁㅇ");
         Cycle cycle = cycleService.findById(member.getCurrentCycle());
         faceService.evaluateFace(member, question, cycle);
 

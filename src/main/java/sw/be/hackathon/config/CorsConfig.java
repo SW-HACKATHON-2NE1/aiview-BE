@@ -1,4 +1,4 @@
-package sw.be.hackathon;
+package sw.be.hackathon.config;
 
 import java.util.Collections;
 

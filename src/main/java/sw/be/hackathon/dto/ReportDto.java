@@ -20,4 +20,11 @@ public class ReportDto {
     Integer happy;
     Integer sad;
     Integer surprised;
+
+    Integer scoreDS;
+    Integer scoreAL;
+    Integer scoreNT;
+    Integer scoreOS;
+    Integer scoreDB;
+    Integer scoreIS;
 }
