@@ -59,7 +59,7 @@ public class InterviewService {
             String content = "";
             for(TranscriptionItemAlternativesDTO alternativesDTO : item.getAlternatives()){
                 Double tempConfidence = Double.parseDouble(alternativesDTO.getConfidence());
-                if(tempConfidence <= 0.72 && !alternativesDTO.getContent().equals(".")){
+                if(tempConfidence <= 0.72 && !alternativesDTO.getContent().equals(".") && !alternativesDTO.getContent().equals(",")){
                     wrong = true;
                 }
 
@@ -79,6 +79,7 @@ public class InterviewService {
 
             if(content.equals(".")){
                 sentence = sentence.replace(" . ", ". ");
+                sentence = sentence.replace(" , ", ", ");
                 dotCount++;
             }
         }
