@@ -26,7 +26,12 @@ public class QuestionController {
     private final MemberService memberService;
     private final CycleService cycleService;
 
-    @ApiOperation(value = "과목에 따라 질문 하나 랜덤으로 가져오기 (싸이클의 첫번째 문제)", notes = "과목코드: DS-자료구조, AL-알고리즘, NT-네트워크, OS-운영체제, DB-데이터베이스, IS-정보보호")
+    @ApiOperation(value = "과목에 따라 질문 하나 랜덤으로 가져오기 (싸이클의 첫번째 문제)", notes = "과목코드: DS-자료구조, AL-알고리즘, NT-네트워크, OS-운영체제, DB-데이터베이스, IS-정보보호" +
+            "{\n" +
+            "  \"questionId\": 15,\n" +
+            "  \"content\": \"스케줄링(Scheduling) 알고리즘 중 하나인 Round Robin 스케줄링에 대해 설명해주세요.\",\n" +
+            "  \"subjectCode\": \"OS\"\n" +
+            "}")
     @GetMapping("/question/first/{subjectCode}")
     public ResponseEntity getFirstQuestion(
             @RequestHeader("Authorization") String token,

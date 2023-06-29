@@ -35,10 +35,10 @@ public class InterviewController {
     private final ReportService reportService;
 
     @ApiOperation(value = "영상에서 텍스트 추출", notes = "AWS Transcribe API를 이용하여 영상에서 텍스트 추출 작업 실행. OK만 주고 body 없음")
-    @GetMapping("/transcription")
+    @PostMapping("/transcription/{questionId}")
     public ResponseEntity createTranscription(
             @RequestHeader(name = "Authorization") String token,
-            @RequestParam Long questionId
+            @PathVariable Long questionId
     ){
         Member member = memberService.findByUUID(token);
         Question question = questionService.findById(questionId);
