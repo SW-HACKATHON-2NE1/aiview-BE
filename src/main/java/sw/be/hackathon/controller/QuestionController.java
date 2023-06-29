@@ -28,6 +28,9 @@ public class QuestionController {
             @PathVariable String subjectCode
     ){
         SubjectCode code = SubjectCode.valueOf(subjectCode.toUpperCase());
+        questionService.getQuestionRandom(code);
+
+        return ResponseEntity
 
     }
 }
