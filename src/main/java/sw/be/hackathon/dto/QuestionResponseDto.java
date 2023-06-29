@@ -1,15 +1,13 @@
 package sw.be.hackathon.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class QuestionRandomResponseDto {
+@Setter
+public class QuestionResponseDto {
     private Long questionId;
     private String content;
     private String subjectCode;
