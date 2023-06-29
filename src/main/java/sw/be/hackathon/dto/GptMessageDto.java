@@ -10,5 +10,5 @@ import lombok.*;
 @Setter
 public class GptMessageDto{
     String role;
-    String content;
+    GptContentDto content;
 }

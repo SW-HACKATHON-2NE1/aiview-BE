@@ -93,9 +93,15 @@ public class InterviewController {
     }
 
     @ApiOperation(value = "GPT", notes = "")
-    @GetMapping("/gpt")
-    public ResponseEntity requestGPT(){
-        GptResponseDto response = gptService.requestGpt();
+    @GetMapping("/gpt/{questionId}")
+    public ResponseEntity requestGPT(
+            @RequestHeader(name = "Authorization") String token,
+            @PathVariable Long questionId
+    ){
+        Member member = memberService.findByUUID(token);
+        Question question = questionService.findById(questionId);
+        Interview interview = interviewService.findByMemberAndQuestion(member, question);
+        GptResponseDto response = gptService.evaluate(interview);
 
         return new ResponseEntity(response, HttpStatus.OK);
     }

@@ -19,22 +19,22 @@ public class Member {
 
     private String uuid;
 
-    private Double scoreDS;
+    private Integer scoreDS;
     private Integer countDS;
 
-    private Double scoreAL;
+    private Integer scoreAL;
     private Integer countAL;
 
-    private Double scoreNT;
+    private Integer scoreNT;
     private Integer countNT;
 
-    private Double scoreOS;
+    private Integer scoreOS;
     private Integer countOS;
 
-    private Double scoreDB;
+    private Integer scoreDB;
     private Integer countDB;
 
-    private Double scoreIS;
+    private Integer scoreIS;
     private Integer countIS;
 
 
@@ -44,12 +44,12 @@ public class Member {
     @PrePersist
     public void init(){
         this.uuid = UUID.randomUUID().toString();
-        this.scoreDS = 0.0;
-        this.scoreAL = 0.0;
-        this.scoreNT = 0.0;
-        this.scoreOS = 0.0;
-        this.scoreDB = 0.0;
-        this.scoreIS = 0.0;
+        this.scoreDS = 0;
+        this.scoreAL = 0;
+        this.scoreNT = 0;
+        this.scoreOS = 0;
+        this.scoreDB = 0;
+        this.scoreIS = 0;
 
         this.countDS = 0;
         this.countAL = 0;
