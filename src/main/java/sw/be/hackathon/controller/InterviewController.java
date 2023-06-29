@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import sw.be.hackathon.domain.Interview;
 import sw.be.hackathon.domain.Member;
 import sw.be.hackathon.domain.Question;
+import sw.be.hackathon.dto.GptResponseDto;
 import sw.be.hackathon.dto.InterviewResponseDto;
 import sw.be.hackathon.dto.S3UploadUrlDto;
 import sw.be.hackathon.dto.transcription.TranscriptionResponseDTO;
@@ -29,6 +30,7 @@ public class InterviewController {
     private final QuestionService questionService;
     private final TranscriptionService transcriptionService;
     private final AmazonS3Service amazonS3Service;
+    private final GptService gptService;
 
     @ApiOperation(value = "영상에서 텍스트 추출", notes = "AWS Transcribe API를 이용하여 영상에서 텍스트 추출 작업 실행")
     @GetMapping("/transcription")
@@ -88,5 +90,13 @@ public class InterviewController {
         InterviewResponseDto responseDto = interviewService.getResultOfInterview(interview);
 
         return new ResponseEntity(responseDto, HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "GPT", notes = "")
+    @GetMapping("/gpt")
+    public ResponseEntity requestGPT(){
+        GptResponseDto response = gptService.requestGpt();
+
+        return new ResponseEntity(response, HttpStatus.OK);
     }
 }
