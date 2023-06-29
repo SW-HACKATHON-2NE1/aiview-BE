@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sw.be.hackathon.domain.Question;
+import sw.be.hackathon.domain.SubjectCode;
 import sw.be.hackathon.repository.QuestionRepository;
 
 @Service
@@ -15,5 +16,8 @@ public class QuestionService {
     public Question findById(Long id){
         return questionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException());
+    }
+
+    public void getQuestionRandom(SubjectCode code) {
     }
 }
