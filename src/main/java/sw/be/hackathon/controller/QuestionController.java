@@ -45,7 +45,7 @@ public class QuestionController {
         return new ResponseEntity(questionDto, HttpStatus.OK);
     }
     
-    @ApiOperation(value = "꼬리질문 ID로 질문 꼬리질문 정보 요청", notes = "")
+    @ApiOperation(value = "꼬리질문 ID로 질문 꼬리질문 정보 요청 (두번째, 세번째 문제)", notes = "")
     @GetMapping("/question/{questionId}")
     public ResponseEntity getQuestion(
             @RequestHeader("Authorization") String token,

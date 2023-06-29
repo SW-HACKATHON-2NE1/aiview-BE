@@ -67,40 +67,40 @@ public class InterviewController {
         return new ResponseEntity(new S3UploadUrlDto(preSignedUrl), HttpStatus.OK);
     }
 
-    @ApiOperation(value = "답변 영상의 URL 발급 (브라우저에 띄우는!!)", notes = "video 태그의 src 값으로 들어갈 영상 url 발급" +
-            "{\n" +
-            "  \"uploadUrl\": \"https://ainterview-video.s3.ap-northeast-2.amazonaws.com/f3ad5850-de47-49a5-906b-47e662ce8f42/1?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20230629T023435Z&X-Amz-SignedHeaders=host&X-Amz-Expires=1799&X-Amz-Credential=AKIAQRKQNEOUET4FUFHP%2F20230629%2Fap-northeast-2%2Fs3%2Faws4_request&X-Amz-Signature=a8de243c5d7fdffde50cd41be31dab17a8e32e80bf9217d686a6df99a3b05836\"\n" +
-            "}")
+//    @ApiOperation(value = "답변 영상의 URL 발급 (브라우저에 띄우는!!)", notes = "video 태그의 src 값으로 들어갈 영상 url 발급" +
+//            "{\n" +
+//            "  \"uploadUrl\": \"https://ainterview-video.s3.ap-northeast-2.amazonaws.com/f3ad5850-de47-49a5-906b-47e662ce8f42/1?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20230629T023435Z&X-Amz-SignedHeaders=host&X-Amz-Expires=1799&X-Amz-Credential=AKIAQRKQNEOUET4FUFHP%2F20230629%2Fap-northeast-2%2Fs3%2Faws4_request&X-Amz-Signature=a8de243c5d7fdffde50cd41be31dab17a8e32e80bf9217d686a6df99a3b05836\"\n" +
+//            "}")
+//
+//    @GetMapping("/presigned-url/{questionId}")
+//    public ResponseEntity getPresignedUrl(
+//            @RequestHeader(name = "Authorization") String token,
+//            @PathVariable Long questionId
+//    ){
+//        Member member = memberService.findByUUID(token);
+//        String preSignedUrl = amazonS3Service.getPresignedUrl(member, questionId);
+//
+//        return new ResponseEntity(new S3UploadUrlDto(preSignedUrl), HttpStatus.OK);
+//    }
 
-    @GetMapping("/presigned-url/{questionId}")
-    public ResponseEntity getPresignedUrl(
-            @RequestHeader(name = "Authorization") String token,
-            @PathVariable Long questionId
-    ){
-        Member member = memberService.findByUUID(token);
-        String preSignedUrl = amazonS3Service.getPresignedUrl(member, questionId);
-
-        return new ResponseEntity(new S3UploadUrlDto(preSignedUrl), HttpStatus.OK);
-    }
-
-    @ApiOperation(value = "답변 결과 데이터 응답", notes = "{\n" +
-            "  \"pronunciationScore\": 0.888,\n" +
-            "  \"transcription\": \"페이징은 메모리를 동일한 크기의 페이지로 분할하여 물리 메모리의 프레임에 매핑하는 메모리 관리 기법입니다. 페이지 테이블을 사용하여 가상 주소를 물리 주소로 변환하며, 이를 통해 메모리 단편화를 줄이고, 가상 메모리 사용을 가능하게 합니다. 이 기법은 메모리를 효율적으로 사용하고 보호하는 데 도움이 되지만, 관리 오버헤드가 발생할 수 있습니다.\",\n" +
-            "  \"url\": https://~~~~,\n" +
-            "  \"questionId\": 1\n" +
-            "}")
-    @GetMapping("/interview/{questionId}")
-    public ResponseEntity getResultOfInterview(
-            @RequestHeader(name = "Authorization") String token,
-            @PathVariable Long questionId
-    ){
-        Member member = memberService.findByUUID(token);
-        Question question = questionService.findById(questionId);
-        QuestionAndAnswer questionAndAnswer = interviewService.findByMemberAndQuestion(member, question);
-        InterviewResponseDto responseDto = interviewService.getResultOfInterview(questionAndAnswer);
-
-        return new ResponseEntity(responseDto, HttpStatus.OK);
-    }
+//    @ApiOperation(value = "답변 결과 데이터 응답", notes = "{\n" +
+//            "  \"pronunciationScore\": 0.888,\n" +
+//            "  \"transcription\": \"페이징은 메모리를 동일한 크기의 페이지로 분할하여 물리 메모리의 프레임에 매핑하는 메모리 관리 기법입니다. 페이지 테이블을 사용하여 가상 주소를 물리 주소로 변환하며, 이를 통해 메모리 단편화를 줄이고, 가상 메모리 사용을 가능하게 합니다. 이 기법은 메모리를 효율적으로 사용하고 보호하는 데 도움이 되지만, 관리 오버헤드가 발생할 수 있습니다.\",\n" +
+//            "  \"url\": https://~~~~,\n" +
+//            "  \"questionId\": 1\n" +
+//            "}")
+//    @GetMapping("/interview/{questionId}")
+//    public ResponseEntity getResultOfInterview(
+//            @RequestHeader(name = "Authorization") String token,
+//            @PathVariable Long questionId
+//    ){
+//        Member member = memberService.findByUUID(token);
+//        Question question = questionService.findById(questionId);
+//        QuestionAndAnswer questionAndAnswer = interviewService.findByMemberAndQuestion(member, question);
+//        InterviewResponseDto responseDto = interviewService.getResultOfInterview(questionAndAnswer);
+//
+//        return new ResponseEntity(responseDto, HttpStatus.OK);
+//    }
 
     @ApiOperation(value = "GPT로부터, 점수/피드백/모범답안 얻어내어 DB에 저장", notes = "{\n" +
             "  \"questionId\": 1,\n" +
@@ -140,5 +140,21 @@ public class InterviewController {
         ReportDto report = reportService.getReport(member, cycle);
 
         return new ResponseEntity(report, HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "처음 접속 시 토큰 받기", notes = "헤더에 토큰이 있으면 OK만 리턴, 헤더가 비어있으면 회원가입 진행 후 토큰 리턴" +
+            "{\n" +
+            "  \"token\": \"efcf2ca0-d19d-459f-b833-8ab76533b524\"\n" +
+            "}")
+    @GetMapping("/")
+    public ResponseEntity provideToken(
+            @RequestHeader(value = "Authorization", required = false) String token
+    ){
+        if(token == null){
+            Member member = memberService.signUp();
+            return new ResponseEntity<>(new MemberUUIDDto(member.getUuid()), HttpStatus.OK);
+        }
+
+        return new ResponseEntity(HttpStatus.OK);
     }
 }
