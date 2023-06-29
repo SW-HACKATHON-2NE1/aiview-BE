@@ -5,12 +5,14 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import sw.be.hackathon.domain.SubjectCode;
+import sw.be.hackathon.dto.QuestionRandomResponseDto;
 import sw.be.hackathon.service.MemberService;
 import sw.be.hackathon.service.QuestionService;
 
@@ -28,9 +30,9 @@ public class QuestionController {
             @PathVariable String subjectCode
     ){
         SubjectCode code = SubjectCode.valueOf(subjectCode.toUpperCase());
-        questionService.getQuestionRandom(code);
+        QuestionRandomResponseDto questionDto = questionService.getQuestionRandom(code);
 
-        return ResponseEntity
+        return new ResponseEntity(questionDto, HttpStatus.OK);
 
     }
 }
