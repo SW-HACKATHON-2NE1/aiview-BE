@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class QuestionRandomResponseDto {
+public class QuestionResponseDto {
     private Long questionId;
     private String content;
     private String subjectCode;
