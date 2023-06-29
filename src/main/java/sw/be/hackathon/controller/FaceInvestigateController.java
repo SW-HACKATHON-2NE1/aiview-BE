@@ -1,5 +1,7 @@
 package sw.be.hackathon.controller;
 
+import java.io.IOException;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -26,8 +28,8 @@ public class FaceInvestigateController {
 		@RequestParam String s3Bucket,
 		@RequestParam String s3Key
 
-	){
-		faceRekognitionService.investigateFace(s3Bucket, s3Key);
+	) throws IOException {
+		faceRekognitionService.investigateFace(token, s3Bucket, s3Key);
 		return ResponseEntity.ok(null);
 	}
 	

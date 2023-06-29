@@ -39,11 +39,8 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	// https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-rekognition
 	implementation group: 'com.amazonaws', name: 'aws-java-sdk-rekognition', version: '1.12.497'
+	implementation 'org.openpnp:opencv:4.5.1-2'
 
-
-
-
-	implementation 'org.bytedeco:javacv:1.5.7' // 버전은 적절히 확인하세요
 }
 
 tasks.named('test') {
