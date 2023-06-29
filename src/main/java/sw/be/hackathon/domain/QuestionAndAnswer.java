@@ -29,9 +29,9 @@ public class QuestionAndAnswer {
     private String url;
 
 
-    @JoinColumn(name="INTERVIEW_ID")
+    @JoinColumn(name="CYCLE_ID")
     @ManyToOne(fetch = FetchType.LAZY)
-    private Interview interview;
+    private Cycle cycle;
 
     private Integer score;
     @Column(length = 2000)

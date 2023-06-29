@@ -9,10 +9,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
+import sw.be.hackathon.domain.Cycle;
 import sw.be.hackathon.domain.Member;
 import sw.be.hackathon.domain.Question;
 import sw.be.hackathon.domain.SubjectCode;
 import sw.be.hackathon.dto.QuestionResponseDto;
+import sw.be.hackathon.service.CycleService;
 import sw.be.hackathon.service.MemberService;
 import sw.be.hackathon.service.QuestionService;
 
@@ -22,6 +24,7 @@ import sw.be.hackathon.service.QuestionService;
 public class QuestionController {
     private final QuestionService questionService;
     private final MemberService memberService;
+    private final CycleService cycleService;
 
     @ApiOperation(value = "과목에 따라 질문 하나 랜덤으로 가져오기 (싸이클의 첫번째 문제)", notes = "과목코드: DS-자료구조, AL-알고리즘, NT-네트워크, OS-운영체제, DB-데이터베이스, IS-정보보호")
     @GetMapping("/question/first/{subjectCode}")
@@ -29,8 +32,11 @@ public class QuestionController {
             @RequestHeader("Authorization") String token,
             @PathVariable String subjectCode
     ){
+        Member member = memberService.findByUUID(token);
         SubjectCode code = SubjectCode.valueOf(subjectCode.toUpperCase());
         QuestionResponseDto questionDto = questionService.getQuestionRandom(code);
+        Cycle cycle = cycleService.getNewCycle();
+        memberService.setCurrentCycle(member, cycle);
 
         return new ResponseEntity(questionDto, HttpStatus.OK);
     }

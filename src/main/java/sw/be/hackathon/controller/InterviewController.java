@@ -2,18 +2,24 @@ package sw.be.hackathon.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sw.be.hackathon.domain.Cycle;
 import sw.be.hackathon.domain.QuestionAndAnswer;
 import sw.be.hackathon.domain.Member;
 import sw.be.hackathon.domain.Question;
 import sw.be.hackathon.dto.GptEvaluationResponseDto;
 import sw.be.hackathon.dto.InterviewResponseDto;
+import sw.be.hackathon.dto.ReportOneDto;
 import sw.be.hackathon.dto.S3UploadUrlDto;
 import sw.be.hackathon.dto.transcription.TranscriptionResponseDTO;
 import sw.be.hackathon.service.*;
+
+import java.util.List;
 
 @Api(tags = "Interview Evaluation")
 @RestController
@@ -25,6 +31,8 @@ public class InterviewController {
     private final TranscriptionService transcriptionService;
     private final AmazonS3Service amazonS3Service;
     private final GptService gptService;
+    private final CycleService cycleService;
+    private final ReportService reportService;
 
     @ApiOperation(value = "영상에서 텍스트 추출", notes = "AWS Transcribe API를 이용하여 영상에서 텍스트 추출 작업 실행. OK만 주고 body 없음")
     @GetMapping("/transcription")
@@ -42,7 +50,7 @@ public class InterviewController {
 
 
         TranscriptionResponseDTO transcriptionResponse = transcriptionService.extractSpeechTextFromVideo(member, questionId);
-        interviewService.saveTranscription(transcriptionResponse, interviewService.saveNewInterview(member, question));
+        interviewService.saveTranscription(transcriptionResponse, interviewService.saveNewQuestionAndAnswer(member, question));
 
         return new ResponseEntity(HttpStatus.OK);
     }
@@ -117,5 +125,18 @@ public class InterviewController {
         GptEvaluationResponseDto evaluateDto = gptService.evaluate(questionAndAnswer);
 
         return new ResponseEntity(evaluateDto, HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "결과 리포트 (한 싸이클이 끝나고)", notes = "한 싸이클이 끝나고 결과 리포트")
+    @GetMapping("/report")
+    public ResponseEntity getReport(
+            @RequestHeader(name = "Authorization") String token
+    ){
+        Member member = memberService.findByUUID(token);
+        Cycle cycle = cycleService.findById(member.getCurrentCycle());
+
+        List<ReportOneDto> reports = reportService.getReport(member, cycle);
+
+        return new ResponseEntity(reports, HttpStatus.OK);
     }
 }
