@@ -22,7 +22,7 @@ public class QuestionService {
     }
 
     public QuestionRandomResponseDto getQuestionRandom(SubjectCode code) {
-        Question question = questionRepository.findByCode(code);
+        Question question = questionRepository.findByCode(code.getName());
 
         return QuestionRandomResponseDto.builder()
                 .questionId(question.getId())
