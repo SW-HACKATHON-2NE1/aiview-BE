@@ -42,10 +42,6 @@ public class FaceRekognitionService {
 
 	public void investigateFace(String token, String s3Bucket, String s3Key) throws IOException {
 
-		videoFrameExtractor.extractS3VideoToImage(s3Bucket, s3Key);
-
-
-		//
 		AmazonRekognition rekognitionClient = AmazonRekognitionClientBuilder.defaultClient();
 
 		DetectFacesRequest request = new DetectFacesRequest()
