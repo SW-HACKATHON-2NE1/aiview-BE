@@ -1,10 +1,10 @@
 package sw.be.hackathon.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 @Entity
@@ -13,6 +13,9 @@ public class Interview {
 	@Id
 	@GeneratedValue
 	private Long id;
+
+	@OneToMany(mappedBy = "interview", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<QuestionAndAnswer> questionAndAnswers;
 
 
 	private Double sad;
