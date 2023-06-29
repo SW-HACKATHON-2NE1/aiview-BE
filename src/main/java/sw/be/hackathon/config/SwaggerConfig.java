@@ -20,7 +20,7 @@ public class SwaggerConfig {
         return new ApiInfoBuilder()
                 .title("sw 중심대학 공동 해커톤")
                 .version("1.0.0")
-                .description("sw 중심대학 공동 해커톤 API 문서")
+                .description("sw 중심대학 공동 해커톤 API 문서\n 과목코드: DS-자료구조, AL-알고리즘, NT-네트워크, OS-운영체제, DB-데이터베이스, IS-정보보호\n 첫 접속을 제외한 매 요청마다 헤더에 Authorization : {token} 값 넣어서 보내주세요")
                 .build();
     }
 
