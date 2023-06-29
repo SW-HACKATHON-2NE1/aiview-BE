@@ -37,6 +37,8 @@ public class Member {
     private Integer scoreIS;
     private Integer countIS;
 
+    private Long currentCycle;
+
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<QuestionAndAnswer> questionAndAnswers;

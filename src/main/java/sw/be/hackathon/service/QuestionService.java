@@ -5,10 +5,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sw.be.hackathon.domain.Question;
 import sw.be.hackathon.domain.SubjectCode;
-import sw.be.hackathon.dto.QuestionRandomResponseDto;
+import sw.be.hackathon.dto.QuestionResponseDto;
 import sw.be.hackathon.repository.QuestionRepository;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -21,10 +19,18 @@ public class QuestionService {
                 .orElseThrow(() -> new RuntimeException());
     }
 
-    public QuestionRandomResponseDto getQuestionRandom(SubjectCode code) {
+    public QuestionResponseDto getQuestionRandom(SubjectCode code) {
         Question question = questionRepository.findByCode(code.getName());
 
-        return QuestionRandomResponseDto.builder()
+        return QuestionResponseDto.builder()
+                .questionId(question.getId())
+                .content(question.getContent())
+                .subjectCode(question.getSubjectCode().getName())
+                .build();
+    }
+
+    public QuestionResponseDto getQuestionDto(Question question) {
+        return QuestionResponseDto.builder()
                 .questionId(question.getId())
                 .content(question.getContent())
                 .subjectCode(question.getSubjectCode().getName())

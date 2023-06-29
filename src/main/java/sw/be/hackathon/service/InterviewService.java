@@ -3,12 +3,14 @@ package sw.be.hackathon.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sw.be.hackathon.domain.Cycle;
 import sw.be.hackathon.domain.QuestionAndAnswer;
 import sw.be.hackathon.domain.Member;
 import sw.be.hackathon.domain.Question;
 import sw.be.hackathon.dto.InterviewResponseDto;
 import sw.be.hackathon.dto.transcription.*;
-import sw.be.hackathon.repository.InterviewRepository;
+import sw.be.hackathon.repository.CycleRepository;
+import sw.be.hackathon.repository.QuestionAndAnswerRepository;
 
 import java.util.List;
 
@@ -16,23 +18,28 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional
 public class InterviewService {
-    private final InterviewRepository interviewRepository;
+    private final QuestionAndAnswerRepository questionAndAnswerRepository;
+    private final CycleRepository cycleRepository;
 
     public QuestionAndAnswer findByMemberAndQuestion(Member member, Question question){
-        return interviewRepository.findByMemberAndQuestion(member, question)
+        return questionAndAnswerRepository.findByMemberAndQuestion(member, question)
                 .orElse(null);
     }
 
     public void remove(QuestionAndAnswer questionAndAnswer) {
-        interviewRepository.delete(questionAndAnswer);
+        questionAndAnswerRepository.delete(questionAndAnswer);
     }
 
-    public QuestionAndAnswer saveNewInterview(Member member, Question question){
+    public QuestionAndAnswer saveNewQuestionAndAnswer(Member member, Question question){
+        Cycle cycle = cycleRepository.findById(member.getCurrentCycle())
+                .orElseThrow(()-> new RuntimeException());
+
         QuestionAndAnswer questionAndAnswer = QuestionAndAnswer.builder()
                 .member(member)
                 .question(question)
+                .cycle(cycle)
                 .build();
-        interviewRepository.save(questionAndAnswer);
+        questionAndAnswerRepository.save(questionAndAnswer);
 
         return questionAndAnswer;
     }
@@ -76,6 +83,7 @@ public class InterviewService {
             }
         }
         confidence /= (items.size() - dotCount);
+        confidence = Math.round(confidence * 100) / 100.0;
 
         questionAndAnswer.setTranscription(sentence);
         questionAndAnswer.setPronunciationScore(confidence);
