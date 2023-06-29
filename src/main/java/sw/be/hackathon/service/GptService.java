@@ -11,8 +11,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+import sw.be.hackathon.domain.Member;
 import sw.be.hackathon.domain.QuestionAndAnswer;
 import sw.be.hackathon.domain.Question;
+import sw.be.hackathon.domain.SubjectCode;
 import sw.be.hackathon.dto.*;
 import sw.be.hackathon.repository.QuestionRepository;
 
@@ -119,6 +121,40 @@ public class GptService {
                 .tailQuestionId(question.getId())
                 .build();
 
+        addScore(questionAndAnswer.getMember(), questionAndAnswer.getQuestion().getSubjectCode(), score);
+
         return evalDto;
+    }
+
+    public void addScore(Member member, SubjectCode code, Integer score){
+        switch (code){
+            case DS:
+                member.setScoreDS(member.getScoreDS()+score);
+                member.setCountDS(member.getCountDS()+1);
+                break;
+            case AL:
+                member.setScoreAL(member.getScoreAL()+score);
+                member.setCountAL(member.getCountAL()+1);
+                break;
+            case DB:
+                member.setScoreDB(member.getScoreDB()+score);
+                member.setCountDB(member.getCountDB()+1);
+                break;
+            case IS:
+                member.setScoreIS(member.getScoreIS()+score);
+                member.setCountIS(member.getCountIS()+1);
+                break;
+            case NT:
+                member.setScoreNT(member.getScoreNT()+score);
+                member.setCountNT(member.getCountNT()+1);
+                break;
+            case OS:
+                member.setScoreOS(member.getScoreOS()+score);
+                member.setCountOS(member.getCountOS()+1);
+                break;
+            default:
+                return;
+
+        }
     }
 }

@@ -28,19 +28,19 @@ public class Cycle {
 
 
 	@Builder.Default
-	private Double sad=0d;
+	private Integer sad=0;
 	@Builder.Default
-	private Double confused=0d;
+	private Integer confused=0;
 	@Builder.Default
-	private Double disgusted=0d;
+	private Integer disgusted=0;
 	@Builder.Default
-	private Double angry=0d;
+	private Integer angry=0;
 	@Builder.Default
-	private Double surprised=0d;
+	private Integer surprised=0;
 	@Builder.Default
-	private Double fear=0d;
+	private Integer fear=0;
 	@Builder.Default
-	private Double calm=0d;
+	private Integer calm=0;
 	@Builder.Default
-	private Double happy=0d;
+	private Integer happy=0;
 }

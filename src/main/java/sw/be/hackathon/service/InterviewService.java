@@ -59,7 +59,7 @@ public class InterviewService {
             String content = "";
             for(TranscriptionItemAlternativesDTO alternativesDTO : item.getAlternatives()){
                 Double tempConfidence = Double.parseDouble(alternativesDTO.getConfidence());
-                if(tempConfidence <= 0.75 && !alternativesDTO.getContent().equals(".")){
+                if(tempConfidence <= 0.72 && !alternativesDTO.getContent().equals(".")){
                     wrong = true;
                 }
 

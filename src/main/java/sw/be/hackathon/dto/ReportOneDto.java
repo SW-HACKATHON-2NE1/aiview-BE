@@ -17,10 +17,4 @@ public class ReportOneDto {
     Double pronunciationScore;
     String url;
 
-    Integer scoreDS;
-    Integer scoreAL;
-    Integer scoreNT;
-    Integer scoreOS;
-    Integer scoreDB;
-    Integer scoreIS;
 }
