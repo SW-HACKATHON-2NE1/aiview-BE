@@ -27,6 +27,7 @@ public class Cycle {
 	private List<QuestionAndAnswer> questionAndAnswers = new ArrayList<>();
 
 
+
 	@Builder.Default
 	private Integer sad=0;
 	@Builder.Default
