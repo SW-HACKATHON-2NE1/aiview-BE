@@ -23,4 +23,5 @@ public class ReportOneDto {
     Integer scoreOS;
     Integer scoreDB;
     Integer scoreIS;
+
 }

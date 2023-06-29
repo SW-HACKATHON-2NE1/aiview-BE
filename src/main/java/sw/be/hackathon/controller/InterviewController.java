@@ -12,10 +12,7 @@ import sw.be.hackathon.domain.Cycle;
 import sw.be.hackathon.domain.QuestionAndAnswer;
 import sw.be.hackathon.domain.Member;
 import sw.be.hackathon.domain.Question;
-import sw.be.hackathon.dto.GptEvaluationResponseDto;
-import sw.be.hackathon.dto.InterviewResponseDto;
-import sw.be.hackathon.dto.ReportOneDto;
-import sw.be.hackathon.dto.S3UploadUrlDto;
+import sw.be.hackathon.dto.*;
 import sw.be.hackathon.dto.transcription.TranscriptionResponseDTO;
 import sw.be.hackathon.service.*;
 
@@ -33,6 +30,7 @@ public class InterviewController {
     private final GptService gptService;
     private final CycleService cycleService;
     private final ReportService reportService;
+    private final FaceService faceService;
 
     @ApiOperation(value = "영상에서 텍스트 추출", notes = "AWS Transcribe API를 이용하여 영상에서 텍스트 추출 작업 실행. OK만 주고 body 없음")
     @PostMapping("/transcription/{questionId}")
@@ -113,7 +111,8 @@ public class InterviewController {
             "  \"tailQuestionId\": 3\n" +
             "}\n" +
             "\n" +
-            "tailQuestionId를 가지고 한 싸이클 다시 시작해주시면 됩니다.")
+            "tailQuestionId를 가지고 다음 질문 요청하고 녹화하고 해주시면 됩니다.\n" +
+            "이 API에서 응답한 body 데이터는 안 써도 돼요. 그냥 확인용")
     @PostMapping("/gpt/{questionId}")
     public ResponseEntity requestGPT(
             @RequestHeader(name = "Authorization") String token,
@@ -123,6 +122,8 @@ public class InterviewController {
         Question question = questionService.findById(questionId);
         QuestionAndAnswer questionAndAnswer = interviewService.findByMemberAndQuestion(member, question);
         GptEvaluationResponseDto evaluateDto = gptService.evaluate(questionAndAnswer);
+        Cycle cycle = cycleService.findById(member.getCurrentCycle());
+        faceService.evaluateFace(member, question, cycle);
 
         return new ResponseEntity(evaluateDto, HttpStatus.OK);
     }
@@ -135,8 +136,8 @@ public class InterviewController {
         Member member = memberService.findByUUID(token);
         Cycle cycle = cycleService.findById(member.getCurrentCycle());
 
-        List<ReportOneDto> reports = reportService.getReport(member, cycle);
+        ReportDto report = reportService.getReport(member, cycle);
 
-        return new ResponseEntity(reports, HttpStatus.OK);
+        return new ResponseEntity(report, HttpStatus.OK);
     }
 }
